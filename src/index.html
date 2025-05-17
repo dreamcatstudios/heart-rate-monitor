@@ -1,238 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, user-scalable=no"
-		/>
-		<link rel="stylesheet" type="text/css" href="style.css" id="style" />
-		<title>💓 Heart Rate Monitor</title>
-		<style>
-			:root {
-				/* Variables for both color schemes */
-				--transition-duration: 0.2s;
-				--border-radius-small: 6px;
-				--border-radius-medium: 10px;
-				--border-radius-large: 15px;
-			}
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="style.css" id="style" />
+    <title>💓 Heart Rate Monitor</title>
+    <style>
+        :root {
+            --transition-duration: 0.2s;
+            --border-radius-small: 6px;
+            --border-radius-medium: 10px;
+            --border-radius-large: 15px;
+            --page-background: #111;
+            --page-color: #ddd;
+            --text-color-muted: #666;
+            --graph-background: transparent;
+            --graph-color: #f76;
+            --backdrop-background: rgba(0, 0, 0, 0.3);
+            --nav-item-background: #151515;
+        }
+        /* Your other CSS might be in style.css or here */
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="main-view">
+            <header>
+                <div>
+                    <h1>Heart Rate Monitor</h1>
+                    <small>Tap the circle to start / stop</small>
+                </div>
+            </header>
 
-			:root {
-				--page-background: #111;
-				--page-color: #ddd;
-				--text-color-muted: #666;
-				--graph-background: transparent;
-				--graph-color: #f76;
-				--backdrop-background: rgba(0, 0, 0, 0.3);
-				--nav-item-background: #151515;
-			}
+            <main>
+                <section id="bpm-display-container">
+                    <div id="bpm-display">
+                        <output id="bpm-value" title="Heart rate"></output>
+                        <label>bpm</label>
+                    </div>
+                </section>
 
-			/* TODO: Finish light color schemea
-			@media (prefers-color-scheme: light) {
-				:root {
-					--page-background: #fff;
-					--page-color: #222;
-					--text-color-muted: #999;
-					--graph-background: #fff;
-					--graph-color: #f76;
-					--backdrop-background: rgba(200, 200, 200, 0.3);
-					--nav-item-background: #bbb;
-				}
-			}
-			*/
-		</style>
-	</head>
-	<body>
-		<div id="app">
-			<div class="main-view">
-				<header>
-					<div>
-						<h1>Heart Rate Monitor</h1>
-						<small>Tap the circle to start / stop</small>
-					</div>
-				</header>
+                <section id="graph-container">
+                    <canvas id="graph-canvas"></canvas>
+                </section>
+            </main>
 
-				<main>
-					<section id="bpm-display-container">
-						<div id="bpm-display">
-							<output id="bpm-value" title="Heart rate"></output>
-							<label>bpm</label>
-						</div>
-					</section>
+            <footer>
+                <button class="icon-button menu-toggle">
+                    <span>Menu</span>
+                </button>
+                <nav class="menu" style="display: none">
+                    <ul>
+                        <li>
+                            <a href="#instructions" data-modal-name="instructions">Instructions</a>
+                        </li>
+                        <li>
+                            <a href="#about" data-modal-name="about">About</a>
+                        </li>
+                        <li class="debug-menu-item" style="display: none">
+                            <a href="#debug" data-modal-name="debug">Debug</a> <!-- Corrected href -->
+                        </li>
+                    </ul>
+                </nav>
+            </footer>
+        </div>
 
-					<section id="graph-container">
-						<canvas id="graph-canvas"></canvas>
-					</section>
-				</main>
+        <div class="modal" data-name="instructions">
+            <div class="modal-box">
+                <div class="heading"><h1>Instructions</h1><button class="icon-button close"><span>Close</span></button></div>
+                <div class="content">
+                    <h2>Measuring your heart rate</h2>
+                    <p>To measure your heart rate first place the tip of your index finger on the back of your device so that it covers both the camera and the flashlight. You can then start the measurement by tapping the circle at the center of the screen.</p>
+                    <h2>Tips</h2>
+                    <p>Keep your finger as still as possible as even slight movements can disrupt the measurement. When the graph is showing a distinct steady pattern of peaks corresponding to your heart beats the measurement should be accurate. If the graph is noisy or very irregular you need to keep your finger more steady or possibly adjust the way you're holding your finger.</p>
+                </div>
+            </div>
+        </div>
 
-				<footer>
-					<button class="icon-button menu-toggle">
-						<span>Menu</span>
-					</button>
-					<nav class="menu" style="display: none">
-						<ul>
-							<li>
-								<a
-									href="#instructions"
-									data-modal-name="instructions"
-									>Instructions</a
-								>
-							</li>
-							<li>
-								<a href="#about" data-modal-name="about"
-									>About</a
-								>
-							</li>
-							<li class="debug-menu-item" style="display: none">
-								<a href="#about" data-modal-name="debug"
-									>Debug</a
-								>
-							</li>
-						</ul>
-					</nav>
-				</footer>
-			</div>
+        <div class="modal" data-name="about">
+            <div class="modal-box">
+                <div class="heading"><h1>About</h1><button class="icon-button close"><span>Close</span></button></div>
+                <div class="content">
+                    <h2>What is this?</h2>
+                    <p>This is an online heart rate monitor. It uses your devices camera to measure your heart beat from your finger tip. It works by measureing how much light is reflected through your finger into the camera. As your heart pumps blood through your finger the brightness fluctuates with every beat, and that is used to detect your heart rate.</p>
+                    <h2>Privacy</h2>
+                    <p>This app contains no analytics, tracking, adverts, cookies or any other such things. No data is collected.</p>
+                    <h2>Code</h2>
+                    <p>This project is open source software. For more info <a target="_blank" href="https://github.com/richrd/heart-rate-monitor">check out the GitHub repository</a>.</p>
+                </div>
+            </div>
+        </div>
 
-			<div class="modal" data-name="instructions">
-				<div class="modal-box">
-					<div class="heading">
-						<h1>Instructions</h1>
-						<button class="icon-button close">
-							<span>Close</span>
-						</button>
-					</div>
-					<div class="content">
-						<h2>Measureing your heart rate</h2>
-						<p>
-							To measure your heart rate first place the tip of
-							your index finger on the back of your device so that
-							it covers both the camera and the flashlight. You
-							can then start the measurement by tapping the circle
-							at the center of the screen.
-						</p>
+        <div class="modal" data-name="debug">
+            <div class="modal-box">
+                <div class="heading"><h1>Debug</h1><button class="icon-button close"><span>Close</span></button></div>
+                <div class="content">
+                    <div class="debug-view">
+                        <div class="feeds">
+                            <video id="camera-feed" autoplay playsinline muted></video> <!-- Added autoplay, playsinline, muted -->
+                            <canvas id="sampling-canvas" width="400" height="400"></canvas>
+                        </div>
+                        <div id="debug-log"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-						<h2>Tips</h2>
-						<p>
-							Keep your finger as still as possible as even slight
-							movements can disrupt the measurement. When the
-							graph is showing a distinct steady pattern of peaks
-							corresponding to your heart beats the measurement
-							should be accurate. If the graph is noisy or very
-							irregular you need to keep your finger more steady
-							or possibly adjust the way you're holding your
-							finger.
-						</p>
-					</div>
-				</div>
-			</div>
+    <script src="main.js"></script> <!-- heartRateMonitor module -->
 
-			<div class="modal" data-name="about">
-				<div class="modal-box">
-					<div class="heading">
-						<h1>About</h1>
-						<button class="icon-button close">
-							<span>Close</span>
-						</button>
-					</div>
-					<div class="content">
-						<h2>What is this?</h2>
-						<p>
-							This is an online heart rate monitor. It uses your
-							devices camera to measure your heart beat from your
-							finger tip. It works by measureing how much light is
-							reflected through your finger into the camera. As
-							your heart pumps blood through your finger the
-							brightness fluctuates with every beat, and that is
-							used to detect your heart rate.
-						</p>
-						<h2>Privacy</h2>
-						<p>
-							This app contains no analytics, tracking, adverts,
-							cookies or any other such things. No data is
-							collected.
-						</p>
-						<h2>Code</h2>
-						<p>
-							This project is open source software. For more info
-							<a
-								target="_blank"
-								href="https://github.com/richrd/heart-rate-monitor"
-								>check out the GitHub repository</a
-							>.
-						</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="modal" data-name="debug">
-				<div class="modal-box">
-					<div class="heading">
-						<h1>Debug</h1>
-						<button class="icon-button close">
-							<span>Close</span>
-						</button>
-					</div>
-					<div class="content">
-						<div class="debug-view">
-							<div class="feeds">
-								<video id="camera-feed"></video>
-								<canvas
-									id="sampling-canvas"
-									width="400"
-									height="400"
-								></canvas>
-							</div>
-							<div id="debug-log"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<script src="main.js"></script>
-
-	<script>
-    // ... (existing setupNav, setupModals functions) ...
-
-    document.addEventListener("DOMContentLoaded", function () {
-        setupNav();
-        setupModals();
-
-        const hash = location.hash.length ? location.hash.substring(1) : "";
-        const flags = hash.split(",");
-        let appDebugMode = false;
-
-        if (flags.includes("debug")) {
-            appDebugMode = true; // Enable debug mode for the app logic
-            const style = document.getElementById("style");
-            style.setAttribute("href", style.getAttribute("href") + "?" + Date.now());
-            document.querySelector(".debug-menu-item").style.display = "block";
+    <script>
+        // DEFINE helper functions FIRST
+        function openModal(name) {
+            const modal = document.querySelector(`.modal[data-name='${name}']`);
+            if (modal) {
+                modal.classList.add("open");
+            } else {
+                console.warn("Modal not found:", name);
+            }
         }
 
-        const bpmElement = document.getElementById("bpm-value");
-        heartRateMonitor.initialize({
-            videoElement: document.getElementById("camera-feed"),
-            samplingCanvas: document.getElementById("sampling-canvas"),
-            graphCanvas: document.getElementById("graph-canvas"),
-            graphColor: getComputedStyle(document.documentElement).getPropertyValue("--graph-color"),
-            graphWidth: 6,
-            onBpmChange: (bpmOrMessage) => {
-                // If it's a number, round it for display, otherwise show message directly
-                bpmElement.innerText = (typeof bpmOrMessage === 'number') ? Math.round(bpmOrMessage) : bpmOrMessage;
-            },
-            debug: appDebugMode // Pass the debug flag here
-        });
+        function setupNav() {
+            const menuToggle = document.querySelector("button.menu-toggle");
+            const navMenu = document.querySelector("nav.menu");
 
-        document.getElementById("bpm-display-container")
-            .addEventListener("click", heartRateMonitor.toggleMonitoring);
-
-        document.documentElement.addEventListener("keyup", (event) => {
-            if (event.key === " ") {
-                heartRateMonitor.toggleMonitoring();
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener("click", () => {
+                    navMenu.classList.toggle("open");
+                    // Toggle display style as well, as it's initially display:none
+                    if (navMenu.classList.contains("open")) {
+                        navMenu.style.display = "block";
+                    } else {
+                        navMenu.style.display = "none";
+                    }
+                });
+            } else {
+                console.warn("Menu toggle or nav menu not found for setupNav");
             }
-        });
-    });
-</script>
 
-	</body>
+
+            document.querySelectorAll("nav.menu a").forEach((link) => { // Make selector more specific
+                link.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    if (navMenu) {
+                         navMenu.classList.remove("open"); // Always close
+                         navMenu.style.display = "none";
+                    }
+
+                    const modalName = event.target.getAttribute("data-modal-name");
+                    if (modalName) {
+                        openModal(modalName);
+                    }
+                });
+            });
+        }
+
+        function setupModals() {
+            document.querySelectorAll(".modal").forEach((modal) => {
+                modal.addEventListener("click", (event) => {
+                    // Check if the click was directly on the modal backdrop, not its children
+                    if (event.target === modal) {
+                        modal.classList.remove("open");
+                    }
+                });
+                const closeButton = modal.querySelector("button.close");
+                if (closeButton) {
+                    closeButton.addEventListener("click", () => {
+                        modal.classList.remove("open");
+                    });
+                }
+            });
+        }
+
+        // THEN, use them in DOMContentLoaded
+        document.addEventListener("DOMContentLoaded", function () {
+            setupNav(); // Now setupNav is defined and hoisted within this script block
+            setupModals(); // Same for setupModals
+
+            const hash = location.hash.length ? location.hash.substring(1) : "";
+            const flags = hash.split(",");
+            let appDebugMode = false;
+
+            if (flags.includes("debug")) {
+                appDebugMode = true;
+                const style = document.getElementById("style");
+                if (style) {
+                    style.setAttribute("href", style.getAttribute("href") + "?" + Date.now());
+                }
+                const debugMenuItem = document.querySelector(".debug-menu-item");
+                if (debugMenuItem) {
+                    debugMenuItem.style.display = "block";
+                }
+            }
+
+            const bpmElement = document.getElementById("bpm-value");
+            const videoElement = document.getElementById("camera-feed");
+            const samplingCanvas = document.getElementById("sampling-canvas");
+            const graphCanvas = document.getElementById("graph-canvas");
+
+            if (bpmElement && videoElement && samplingCanvas && graphCanvas && typeof heartRateMonitor !== 'undefined') {
+                heartRateMonitor.initialize({
+                    videoElement: videoElement,
+                    samplingCanvas: samplingCanvas,
+                    graphCanvas: graphCanvas,
+                    graphColor: getComputedStyle(document.documentElement).getPropertyValue("--graph-color").trim(),
+                    graphWidth: 6,
+                    onBpmChange: (bpmOrMessage) => {
+                        bpmElement.innerText = (typeof bpmOrMessage === 'number') ? Math.round(bpmOrMessage) : bpmOrMessage;
+                    },
+                    debug: appDebugMode
+                });
+            } else {
+                console.error("One or more elements for heartRateMonitor initialization are missing, or heartRateMonitor module not loaded.");
+            }
+
+
+            const bpmDisplayContainer = document.getElementById("bpm-display-container");
+            if (bpmDisplayContainer && typeof heartRateMonitor !== 'undefined') {
+                 bpmDisplayContainer.addEventListener("click", heartRateMonitor.toggleMonitoring);
+            }
+
+
+            document.documentElement.addEventListener("keyup", (event) => {
+                if (event.key === " " && typeof heartRateMonitor !== 'undefined') {
+                    heartRateMonitor.toggleMonitoring();
+                }
+            });
+        });
+    </script>
+</body>
 </html>
