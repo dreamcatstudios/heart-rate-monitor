@@ -190,100 +190,49 @@
 		</div>
 
 		<script src="main.js"></script>
-		<script>
-			function openModal(name) {
-				document
-					.querySelector(`.modal[data-name='${name}']`)
-					.classList.add("open");
-			}
 
-			function setupNav() {
-				document
-					.querySelector("button.menu-toggle")
-					.addEventListener("click", () => {
-						document
-							.querySelector("nav.menu")
-							.classList.toggle("open");
-					});
-				document.querySelectorAll("nav a").forEach((link) => {
-					link.addEventListener("click", (event) => {
-						event.preventDefault();
-						document
-							.querySelector("nav.menu")
-							.classList.toggle("open");
+	<script>
+    // ... (existing setupNav, setupModals functions) ...
 
-						const modalName = event.target.getAttribute(
-							"data-modal-name"
-						);
-						openModal(modalName);
-					});
-				});
-			}
+    document.addEventListener("DOMContentLoaded", function () {
+        setupNav();
+        setupModals();
 
-			function setupModals() {
-				document.querySelectorAll(".modal").forEach((modal) => {
-					modal.addEventListener("click", (event) => {
-						if (event.originalTarget === modal) {
-							modal.classList.remove("open");
-						}
-					});
-					modal
-						.querySelector("button.close")
-						.addEventListener("click", () => {
-							modal.classList.remove("open");
-						});
-				});
-			}
+        const hash = location.hash.length ? location.hash.substring(1) : "";
+        const flags = hash.split(",");
+        let appDebugMode = false;
 
-			document.addEventListener("DOMContentLoaded", function () {
-				setupNav();
-				setupModals();
+        if (flags.includes("debug")) {
+            appDebugMode = true; // Enable debug mode for the app logic
+            const style = document.getElementById("style");
+            style.setAttribute("href", style.getAttribute("href") + "?" + Date.now());
+            document.querySelector(".debug-menu-item").style.display = "block";
+        }
 
-				// Allow setting various flags and options via the hash fragment
-				const hash = location.hash.length
-					? location.hash.substring(1)
-					: "";
-				const flags = hash.split(",");
+        const bpmElement = document.getElementById("bpm-value");
+        heartRateMonitor.initialize({
+            videoElement: document.getElementById("camera-feed"),
+            samplingCanvas: document.getElementById("sampling-canvas"),
+            graphCanvas: document.getElementById("graph-canvas"),
+            graphColor: getComputedStyle(document.documentElement).getPropertyValue("--graph-color"),
+            graphWidth: 6,
+            onBpmChange: (bpmOrMessage) => {
+                // If it's a number, round it for display, otherwise show message directly
+                bpmElement.innerText = (typeof bpmOrMessage === 'number') ? Math.round(bpmOrMessage) : bpmOrMessage;
+            },
+            debug: appDebugMode // Pass the debug flag here
+        });
 
-				// Debug mode
-				if (flags.includes("debug")) {
-					// Force refreshing CSS in debug mode
-					const style = document.getElementById("style");
-					style.setAttribute(
-						"href",
-						style.getAttribute("href") + "?" + Date.now()
-					);
+        document.getElementById("bpm-display-container")
+            .addEventListener("click", heartRateMonitor.toggleMonitoring);
 
-					document.querySelector(".debug-menu-item").style.display =
-						"block";
-				}
+        document.documentElement.addEventListener("keyup", (event) => {
+            if (event.key === " ") {
+                heartRateMonitor.toggleMonitoring();
+            }
+        });
+    });
+</script>
 
-				// Initialize the heart rate monitor
-				const bpmElement = document.getElementById("bpm-value");
-				heartRateMonitor.initialize({
-					videoElement: document.getElementById("camera-feed"),
-					samplingCanvas: document.getElementById("sampling-canvas"),
-					graphCanvas: document.getElementById("graph-canvas"),
-					graphColor: getComputedStyle(
-						document.documentElement
-					).getPropertyValue("--graph-color"),
-					graphWidth: 6,
-					onBpmChange: (bpm) => (bpmElement.innerText = bpm),
-				});
-
-				document
-					.getElementById("bpm-display-container")
-					.addEventListener(
-						"click",
-						heartRateMonitor.toggleMonitoring
-					);
-
-				document.documentElement.addEventListener("keyup", (event) => {
-					if (event.key === " ") {
-						heartRateMonitor.toggleMonitoring();
-					}
-				});
-			});
-		</script>
 	</body>
 </html>
